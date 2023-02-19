@@ -1,6 +1,7 @@
 #include QMK_KEYBOARD_H
 #ifdef OLED_ENABLE
 #include "oled.h"
+#include "bongo.h"
 #endif // OLED_ENABLE
 
 enum custom_keycodes {
@@ -203,6 +204,8 @@ bool oled_task_user(void) {
   } else {
       oled_set_cursor(0, 0);
       render_stats();
+      oled_set_cursor(0, 12);
+      render_bongo();
   }
   return false;
 }
