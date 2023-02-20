@@ -46,7 +46,7 @@ enum layer_number {
   _NUMBER,
   _NAVIGATION,
   _FUNCTION,
-  _GAME,
+  _GAME
 };
 
 extern bool isDefaultRedoMode;
