@@ -33,23 +33,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TAPPING_TERM 200
 
 /* Encoder support */
-#define ENCODERS_PAD_A { F5 }
-#define ENCODERS_PAD_B { F4 }
-#define ENCODERS_PAD_A_RIGHT { F4 }
-#define ENCODERS_PAD_B_RIGHT { F5 }
 #define ENCODER_RESOLUTION 2
 
 #define SPLIT_LED_STATE_ENABLE
 #define SPLIT_TRANSPORT_MIRROR
 #define SPLIT_OLED_ENABLE
 
+#if !defined(__ASSEMBLER__) 
 enum layer_number {
   _QWERTY = 0,
   _MOUSE,
   _NUMBER,
   _NAVIGATION,
   _FUNCTION,
-  _GAME
+  _GAME,
 };
 
 extern bool isDefaultRedoMode;
+#endif

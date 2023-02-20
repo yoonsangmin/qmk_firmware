@@ -1,22 +1,12 @@
-// Copyright 2022 Cole Smith <cole@boadsource.xyz>
-// SPDX-License-Identifier: GPL-2.0-or-later
-
 #include QMK_KEYBOARD_H
-#include <stdio.h>
+#ifdef OLED_ENABLE
+#include "oled.h"
 #include "bongo.h"
-
-enum layers {
-    _QWERTY,
-    _MOUSE,
-    _NUMBER,
-    _NAVIGATION,
-    _FUNCTION,
-    _GAME,
-};
+#endif // OLED_ENABLE
 
 enum custom_keycodes {
-    REDOMOD = SAFE_RANGE,
-    REDO,
+  REDOMOD = SAFE_RANGE,
+  REDO,
 };
 
 // Layer 0 is used for custom tap-hold functions
@@ -40,10 +30,10 @@ enum custom_keycodes {
 #define COPY       LCTL(KC_C)
 #define PASTE      LCTL(KC_V)
 
-extern bool isDefaultRedoMode;
+bool isDefaultRedoMode = true;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
- 
+
 /* QWERTY
  * ,-----------------------------------------.                    ,-----------------------------------------.
  * |   +  |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |   -  |
@@ -148,16 +138,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 /* FUNCTION
  * ,-----------------------------------------.                    ,-----------------------------------------.
- * | Reset| Sat+ | Hue+ | Spd+ | Brt+ | Mod+ |                    |      |      |      |      |      |      |
+ * | Reset|      |      |      |      |      |                    |      |      |      |      |      |      |
  * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |EE CLR| Sat- | Hue- | Spd- | Brt- | Mod- |                    | PSCR |  F7  |  F8  |  F9  |  F12 |      |
+ * |EE CLR|      |      |      |      |      |                    | PSCR |  F7  |  F8  |  F9  |  F12 |      |
  * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      | RGBT | Mute | Vol- | Vol+ |      |-------.    ,-------| SCRL |  F4  |  F5  |  F5  |  F11 |      |
+ * |      |      |      | Vol- | Vol+ | Mute |-------.    ,-------| SCRL |  F4  |  F5  |  F5  |  F11 |      |
  * |      |      |      |      |      |      |       |    |       |      |      |      |      |      |      |
  * |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
- * |      |      |      | Prev | Next |      |-------|    |-------| PAUS |  F1  |  F2  |  F3  |  F10 |      |
+ * |      |      |      | Prev | Next | Play |-------|    |-------| PAUS |  F1  |  F2  |  F3  |  F10 |      |
  * |      |      |      |      |      |      |       |    |       |      |      |      |      |      |      |
  * `-----------------------------------------/      /      \      \-----------------------------------------'
  *                   |      |   `  | Enter| /      /        \      \  |  Del |      |      |
@@ -165,13 +155,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                   `---------------------------'            '------''--------------------'
  */
   [_FUNCTION] = LAYOUT(
-  QK_BOOT, RGB_SAI, RGB_HUI, RGB_SPI, RGB_VAI, RGB_MOD,                   _______, _______, _______, _______, _______, _______,
-  EE_CLR,  RGB_SAD, RGB_HUD, RGB_SPD, RGB_VAD, RGB_RMOD,                  KC_PSCR, KC_F7,   KC_F8,   KC_F9,   KC_F12,  _______,
-  _______, RGB_TOG, KC_MUTE, KC_VOLD, KC_VOLU, _______,                   KC_SCRL, KC_F4,   KC_F5,   KC_F6,   KC_F11,  _______,
-  _______, _______, _______, KC_MPRV, KC_MNXT, _______, _______, _______, KC_PAUS, KC_F1,   KC_F2,   KC_F3,   KC_F10,  _______,
+  QK_BOOT, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______,
+  EE_CLR,  _______, _______, _______, _______, _______,                   KC_PSCR, KC_F7,   KC_F8,   KC_F9,   KC_F12,  _______,
+  _______, _______, _______, KC_VOLD, KC_VOLU, KC_MUTE,                   KC_SCRL, KC_F4,   KC_F5,   KC_F6,   KC_F11,  _______,
+  _______, _______, _______, KC_MPRV, KC_MNXT, KC_MPLY, _______, _______, KC_PAUS, KC_F1,   KC_F2,   KC_F3,   KC_F10,  _______,
                              _______, KC_GRV,  KC_ENT,  _______, _______, KC_DEL,  _______, _______
   ),
-/* GAME - LOL
+/* GAME
  * ,-----------------------------------------.                    ,-----------------------------------------.
  * |  ESC |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |   -  |
  * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
@@ -182,10 +172,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * | LCTRL|   A  |   S  |   D  |   F  |   H  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  | Enter|
  * |      |      |      |      |      |      |  TO0  |    |       |      |      |      |      |      |      |
  * |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
- * | LSFT |   Z  |   X  |   C  |   P  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  | RSFT |
+ * | LGUI |   Z  |   X  |   C  |   P  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  |      |
  * |      |      |      |      |      |      |       |    |       |      |      |      |      |      |      |
  * `-----------------------------------------/      /      \      \-----------------------------------------'
- *                   | LGUI |   `  | LAlt | / Space/        \BackSP\  |  Del | RAlt | RCTRL|
+ *                   |   `  | LSFT | LAlt | / Space/        \      \  |       |      |      |
  *                   |      |      |      |/      /          \      \ |      |      |      |
  *                   `---------------------------'            '------''--------------------'
  */
@@ -193,13 +183,36 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_ESC,   KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                      KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,
   KC_TAB,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                      KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
   KC_LCTL,  KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                      KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_ENT,
-  KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,    QWERTY,  _______, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
-                             KC_LGUI, KC_GRV,  KC_LALT, KC_SPC,  KC_BSPC, KC_DEL,  KC_RALT, KC_RCTL
+  KC_LGUI,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,    QWERTY,  _______, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, _______,
+                             KC_GRV,  KC_LSFT, KC_LALT, KC_SPC,  _______, _______, _______, _______
   )
 };
 
+//SSD1306 OLED update loop, make sure to enable OLED_ENABLE=yes in rules.mk
+#ifdef OLED_ENABLE
+
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+  return OLED_ROTATION_270;
+}
+
+bool oled_task_user(void) {
+  if (is_keyboard_master()) {
+      oled_set_cursor(0, 0);
+      render_layer();
+      oled_set_cursor(0, 12);
+      render_redo_mod();
+  } else {
+      oled_set_cursor(0, 0);
+      render_stats();
+      oled_set_cursor(0, 12);
+      render_bongo();
+  }
+  return false;
+}
+#endif // OLED_ENABLE
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
+  switch (keycode) {
         case ESC:
             if (!record->tap.count && record->event.pressed) {
                 tap_code(KC_ESC); // Intercept hold function to send ESC
@@ -217,19 +230,42 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->tap.count) {
                 if (record->event.pressed) {
                     if (isDefaultRedoMode) {
-                        register_code16(LCTL(LSFT(KC_Z)));
-                    } else {
                         register_code16(LCTL(KC_Y));
+                    } else {
+                        register_code16(LCTL(LSFT(KC_Z)));
                     }
                 } else {
                     if (isDefaultRedoMode) {
-                        unregister_code16(LCTL(LSFT(KC_Z)));
-                    } else {
                         unregister_code16(LCTL(KC_Y));
+                    } else {
+                        unregister_code16(LCTL(LSFT(KC_Z)));
                     }
                 }
             }
             return false;
-    }
-    return true;
+  }
+  return true;
 }
+
+#ifdef ENCODER_ENABLE
+bool encoder_update_user(uint8_t index, bool clockwise) {
+    if (index == 0) { /* First encoder */
+        if (clockwise) {
+            if (isDefaultRedoMode) {
+                tap_code16(LCTL(KC_Y));
+            } else {
+                tap_code16(LCTL(LSFT(KC_Z)));
+            }
+        } else {
+            tap_code16(UNDO);
+        }
+    } else if (index == 1) { /* Second encoder */
+        if (clockwise) {
+            tap_code(KC_VOLU);
+        } else {
+            tap_code(KC_VOLD);
+        }
+    }
+    return false;
+}
+#endif
