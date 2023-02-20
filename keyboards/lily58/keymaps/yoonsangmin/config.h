@@ -45,11 +45,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 enum layer_number {
   _QWERTY = 0,
+  _GAME,
   _MOUSE,
   _NUMBER,
   _NAVIGATION,
   _FUNCTION,
-  _GAME
 };
 
 extern bool isDefaultRedoMode;
