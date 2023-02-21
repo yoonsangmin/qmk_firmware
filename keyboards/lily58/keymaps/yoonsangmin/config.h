@@ -42,6 +42,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPLIT_LED_STATE_ENABLE
 #define SPLIT_TRANSPORT_MIRROR
 #define SPLIT_OLED_ENABLE
+#define SPLIT_USB_TIMEOUT 2000
+#define SPLIT_WATCHDOG_ENABLE
+#define SPLIT_WATCHDOG_TIMEOUT 3000
+#define SPLIT_USB_DETECT
 
 enum layer_number {
   _QWERTY = 0,
