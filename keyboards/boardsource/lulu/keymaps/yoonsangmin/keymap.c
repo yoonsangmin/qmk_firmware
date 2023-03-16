@@ -311,9 +311,9 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
         switch (get_highest_layer(layer_state)) {
             case _MOUSE:
                 if (clockwise) {
-                    tap_code(KC_PGUP);
-                } else {
                     tap_code(KC_PGDN);
+                } else {
+                    tap_code(KC_PGUP);
                 }
                 break;
             case _NUMBER:
