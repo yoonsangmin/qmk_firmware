@@ -244,8 +244,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return true;             // Return true for normal processing of tap keycode
         case REDOMOD:
             if (record->event.pressed) {
-                os_variant_t os = detected_host_os();
-                if (!(os == OS_MACOS || os == OS_IOS)) {
+                os_variant_t host_os = detected_host_os();
+                if (!(host_os == OS_MACOS || host_os == OS_IOS)) {
                     isDefaultRedoMode = !isDefaultRedoMode;
                 }
             }
@@ -263,9 +263,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) { /* First encoder */
-        os_variant_t os = detected_host_os();
+        os_variant_t host_os = detected_host_os();
         if (clockwise) {
-            if (os == OS_MACOS || os == OS_IOS) {
+            if (host_os == OS_MACOS || host_os == OS_IOS) {
                 tap_code16(LCMD(LSFT(KC_Z)));
             } else {
                 if (isDefaultRedoMode) {
@@ -275,7 +275,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                 }
             }
         } else {
-            if (os == OS_MACOS || os == OS_IOS) {
+            if (host_os == OS_MACOS || host_os == OS_IOS) {
                 tap_code16(LCMD(KC_Z));
             } else {
                 tap_code16(LCTL(KC_Z));
