@@ -262,32 +262,76 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (index == 0) { /* First encoder */
-        os_variant_t host_os = detected_host_os();
-        if (clockwise) {
-            if (host_os == OS_MACOS || host_os == OS_IOS) {
-                tap_code16(LCMD(LSFT(KC_Z)));
-            } else {
-                if (isDefaultRedoMode) {
-                    tap_code16(LCTL(KC_Y));
+  if (index == 0) { /* First encoder */
+        os_variant_t host_os;
+        switch (get_highest_layer(layer_state)) {
+            case _GAME:
+                if (clockwise) {
+                    tap_code16(KC_WH_U);
                 } else {
-                    tap_code16(LCTL(LSFT(KC_Z)));
+                    tap_code16(KC_WH_D);
                 }
-            }
-        } else {
-            if (host_os == OS_MACOS || host_os == OS_IOS) {
-                tap_code16(LCMD(KC_Z));
-            } else {
-                tap_code16(LCTL(KC_Z));
-            }
+                break;
+            case _NAVIGATION:
+                if (clockwise) {
+                    tap_code16(KC_BTN5);
+                } else {
+                    tap_code16(KC_BTN4);
+                }
+                break;
+            case _FUNCTION:
+                if (clockwise) {
+                    tap_code16(KC_MNXT);
+                } else {
+                    tap_code16(KC_MPRV);
+                }
+                break;
+            default:
+                host_os = detected_host_os();
+                if (clockwise) {
+                    if (host_os == OS_MACOS || host_os == OS_IOS) {
+                        tap_code16(LCMD(LSFT(KC_Z)));
+                    } else {
+                        if (isDefaultRedoMode) {
+                            tap_code16(LCTL(KC_Y));
+                        } else {
+                            tap_code16(LCTL(LSFT(KC_Z)));
+                        }
+                    }
+                } else {
+                    if (host_os == OS_MACOS || host_os == OS_IOS) {
+                        tap_code16(LCMD(KC_Z));
+                    } else {
+                        tap_code16(LCTL(KC_Z));
+                    }
+                }
+                break;
         }
-    } else if (index == 1) { /* Second encoder */
-        if (clockwise) {
-            tap_code(KC_VOLU);
-        } else {
-            tap_code(KC_VOLD);
+  } else if (index == 1) { /* Second encoder */
+        switch (get_highest_layer(layer_state)) {
+            case _MOUSE:
+                if (clockwise) {
+                    tap_code(KC_PGUP);
+                } else {
+                    tap_code(KC_PGDN);
+                }
+                break;
+            case _NUMBER:
+                if (clockwise) {
+                    tap_code(KC_TAB);
+                } else {
+                    tap_code16(LSFT(KC_TAB));
+                }
+                break;
+            default:
+                if (clockwise) {
+                    tap_code(KC_VOLU);
+                } else {
+                    tap_code(KC_VOLD);
+                }
+                break;
         }
-    }
-    return false;
+  }
+  return false;
 }
 #endif
