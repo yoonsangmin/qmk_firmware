@@ -243,7 +243,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) { /* First encoder */
         if (clockwise) {
-            tap_code16(REDO);
+            if (isDefaultRedoMode) {
+                tap_code16(LCTL(KC_Y));
+            } else {
+                 tap_code16(LCTL(LSFT(KC_Z)));
+            }
         } else {
             tap_code16(LCTL(KC_Z));
         }

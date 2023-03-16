@@ -43,6 +43,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPLIT_WATCHDOG_TIMEOUT 3000
 #define SPLIT_USB_DETECT
 
+#define USB_MAX_POWER_CONSUMPTION 100
+
 #if !defined(__ASSEMBLER__) 
 enum layer_number {
   _QWERTY = 0,
