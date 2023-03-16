@@ -7,6 +7,8 @@
 
 enum custom_keycodes {
   REDOMOD = SAFE_RANGE,
+  CTL,
+  GUI,
 };
 
 // Layer 0 is used for custom tap-hold functions
@@ -49,8 +51,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  [_QWERTY] = LAYOUT(
   ESC,      KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                      KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,
   KC_TAB,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                      KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
-  KC_LCTL,  KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                      KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-  KC_LGUI,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,    REDOMOD, KC_MUTE, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RALT,
+  CTL,      KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                      KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
+  GUI,      KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,    REDOMOD, KC_MUTE, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RALT,
                              KC_LALT, NUMBER,  MOUSE,   SPACE,   BKSPC,   NAV,     FUNC,    KANJI
   ),
 /* GAME
@@ -203,6 +205,35 @@ bool oled_task_user(void) {
 }
 #endif // OLED_ENABLE
 
+void process_platform_combo(uint16_t keycode, keyrecord_t *record) {
+  uint8_t  host_os          = detected_host_os();
+  uint16_t keycode_to_press = KC_NO;
+  if (host_os == OS_MACOS || host_os == OS_IOS) {
+      switch (keycode) {
+          case CTL:
+              keycode_to_press = KC_LGUI;
+              break;
+          case GUI:
+              keycode_to_press = KC_LCTL;
+              break;
+      }
+  } else {
+      switch (keycode) {
+          case CTL:
+              keycode_to_press = KC_LCTL;
+              break;
+          case GUI:
+              keycode_to_press = KC_LGUI;
+              break;
+      }
+  }
+  if (record->event.pressed) {
+      register_code(keycode_to_press);
+  } else {
+      unregister_code(keycode_to_press);
+  }
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
         case ESC:
@@ -218,7 +249,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     isDefaultRedoMode = !isDefaultRedoMode;
                 }
             }
-            break;
+            return false;
+        case CTL:
+            process_platform_combo(keycode, record);
+            return false;
+        case GUI:
+            process_platform_combo(keycode, record);
+            return false;
   }
   return true;
 }
