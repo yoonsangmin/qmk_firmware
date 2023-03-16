@@ -11,3 +11,4 @@ SWAP_HANDS_ENABLE = no      # Enable one-hand typing
 OLED_ENABLE = yes           # OLED display
 ENCODER_ENABLE = yes        # Encoder
 DEBOUNCE_TYPE = asym_eager_defer_pk # Contact bounce / contact chatter
+OS_DETECTION_ENABLE = yes

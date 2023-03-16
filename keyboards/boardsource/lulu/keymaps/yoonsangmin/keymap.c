@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#include "os_detection.h"
 #ifdef OLED_ENABLE
 #include "oled.h"
 #include "bongo.h"
@@ -6,7 +7,6 @@
 
 enum custom_keycodes {
   REDOMOD = SAFE_RANGE,
-  REDO,
 };
 
 // Layer 0 is used for custom tap-hold functions
@@ -213,28 +213,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return true;             // Return true for normal processing of tap keycode
         case REDOMOD:
             if (record->event.pressed) {
-                unregister_code16(LCTL(LSFT(KC_Z)));
-                unregister_code16(LCTL(KC_Y));
-                isDefaultRedoMode = !isDefaultRedoMode;
-            }
-            break;
-        case REDO:
-            if (!record->tap.count) {
-                if (record->event.pressed) {
-                    if (isDefaultRedoMode) {
-                        register_code16(LCTL(KC_Y));
-                    } else {
-                        register_code16(LCTL(LSFT(KC_Z)));
-                    }
-                } else {
-                    if (isDefaultRedoMode) {
-                        unregister_code16(LCTL(KC_Y));
-                    } else {
-                        unregister_code16(LCTL(LSFT(KC_Z)));
-                    }
+                os_variant_t os = detected_host_os();
+                if (!(os == OS_MACOS || os == OS_IOS)) {
+                    isDefaultRedoMode = !isDefaultRedoMode;
                 }
             }
-            return false;
+            break;
   }
   return true;
 }
@@ -242,14 +226,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) { /* First encoder */
+        os_variant_t os = detected_host_os();
         if (clockwise) {
-            if (isDefaultRedoMode) {
-                tap_code16(LCTL(KC_Y));
+            if (os == OS_MACOS || os == OS_IOS) {
+                tap_code16(LCMD(LSFT(KC_Z)));
             } else {
-                 tap_code16(LCTL(LSFT(KC_Z)));
+                if (isDefaultRedoMode) {
+                    tap_code16(LCTL(KC_Y));
+                } else {
+                    tap_code16(LCTL(LSFT(KC_Z)));
+                }
             }
         } else {
-            tap_code16(LCTL(KC_Z));
+            if (os == OS_MACOS || os == OS_IOS) {
+                tap_code16(LCMD(KC_Z));
+            } else {
+                tap_code16(LCTL(KC_Z));
+            }
         }
     } else if (index == 1) { /* Second encoder */
         if (clockwise) {
