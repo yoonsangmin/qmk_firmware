@@ -47,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPLIT_WATCHDOG_TIMEOUT 3000
 #define SPLIT_USB_DETECT
 
+#if !defined(__ASSEMBLER__) 
 enum layer_number {
   _QWERTY = 0,
   _GAME,
@@ -57,3 +58,4 @@ enum layer_number {
 };
 
 extern bool isDefaultRedoMode;
+#endif
