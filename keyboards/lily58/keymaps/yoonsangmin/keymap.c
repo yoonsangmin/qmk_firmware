@@ -61,8 +61,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------.    ,-------|      |      |      |      |      |      |
- * |      |      |      |      |      |      |  WH U |    |       |      |      |      |      |      |      |
- * |------+------+------+------+------+------|  WH D |    |       |------+------+------+------+------+------|
+ * |      |      |      |      |      |      |       |    |       |      |      |      |      |      |      |
+ * |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------|    |-------|      |      |      |      |      | Enter|
  * |      |      |      |      |      |      |  TO0  |    |       |      |      |      |      |      |      |
  * |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
@@ -265,13 +265,13 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
   if (index == 0) { /* First encoder */
         os_variant_t host_os;
         switch (get_highest_layer(layer_state)) {
-            case _GAME:
-                if (clockwise) {
-                    tap_code16(KC_WH_U);
-                } else {
-                    tap_code16(KC_WH_D);
-                }
-                break;
+            // case _GAME:
+            //     if (clockwise) {
+            //         tap_code16(KC_WH_U);
+            //     } else {
+            //         tap_code16(KC_WH_D);
+            //     }
+            //     break;
             case _NAVIGATION:
                 if (clockwise) {
                     tap_code16(KC_BTN5);
