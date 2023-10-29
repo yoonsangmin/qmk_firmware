@@ -30,7 +30,8 @@
 #if !defined(__ASSEMBLER__) 
 enum layer_number {
   _QWERTY = 0,
-  _GAME,
+  _GAME1,
+  _GAME2,
   _MOUSE,
   _NUMBER,
   _NAVIGATION,

@@ -37,7 +37,8 @@ void render_layer(void)
         case _QWERTY:
             oled_write_raw_P(qwerty, 128);
             break;
-        case _GAME:
+        case _GAME1:
+        case _GAME2:
             oled_write_raw_P(game, 128);
             break;
         case _MOUSE:
