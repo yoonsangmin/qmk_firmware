@@ -35,8 +35,8 @@
 enum layer_number {
   _QWERTY = 0,
   _GAME,
-  _RIGHT_NUMBER,
   _NAVIGATION,
+  _RIGHT_NUMBER,
   _FUNCTION,
   _MOUSE,
   _NUMBER,

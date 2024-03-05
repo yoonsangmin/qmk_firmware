@@ -40,11 +40,11 @@ void render_layer(void)
         case _GAME:
             oled_write_raw_P(game, 128);
             break;
-        case _RIGHT_NUMBER:
-            oled_write_raw_P(number, 128);
-            break;
         case _NAVIGATION:
             oled_write_raw_P(navi, 128);
+            break;
+        case _RIGHT_NUMBER:
+            oled_write_raw_P(number, 128);
             break;
         case _FUNCTION:
             oled_write_raw_P(func, 128);
