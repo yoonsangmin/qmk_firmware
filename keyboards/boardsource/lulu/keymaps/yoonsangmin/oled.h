@@ -37,21 +37,23 @@ void render_layer(void)
         case _QWERTY:
             oled_write_raw_P(qwerty, 128);
             break;
-        case _GAME1:
-        case _GAME2:
+        case _GAME:
             oled_write_raw_P(game, 128);
+            break;
+        case _NAVIGATION:
+            oled_write_raw_P(navi, 128);
+            break;
+        case _RIGHT_NUMBER:
+            oled_write_raw_P(number, 128);
+            break;
+        case _FUNCTION:
+            oled_write_raw_P(func, 128);
             break;
         case _MOUSE:
             oled_write_raw_P(mouse, 128);
             break;
         case _NUMBER:
             oled_write_raw_P(number, 128);
-            break;
-        case _NAVIGATION:
-            oled_write_raw_P(navi, 128);
-            break;
-        case _FUNCTION:
-            oled_write_raw_P(func, 128);
             break;
         default:
             oled_write_ln_P(PSTR("Undef\n"), false);

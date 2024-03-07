@@ -30,12 +30,12 @@
 #if !defined(__ASSEMBLER__) 
 enum layer_number {
   _QWERTY = 0,
-  _GAME1,
-  _GAME2,
+  _GAME,
+  _NAVIGATION,
+  _RIGHT_NUMBER,
+  _FUNCTION,
   _MOUSE,
   _NUMBER,
-  _NAVIGATION,
-  _FUNCTION,
 };
 
 extern bool isDefaultRedoMode;
