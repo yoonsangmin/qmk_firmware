@@ -311,9 +311,9 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                         tap_code16(LCMD(LSFT(KC_Z)));
                     } else {
                         if (isDefaultRedoMode) {
-                            tap_code16(LCTL(KC_Y));
-                        } else {
                             tap_code16(LCTL(LSFT(KC_Z)));
+                        } else {
+                            tap_code16(LCTL(KC_Y));
                         }
                     }
                 } else {

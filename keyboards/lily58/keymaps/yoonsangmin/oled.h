@@ -87,9 +87,9 @@ void render_redo_mod(void)
         oled_write_P(PSTR("CMD+Z"), false);
     } else {
         if (isDefaultRedoMode) {
-            oled_write_P(PSTR("CTL+y"), false);
-        } else {
             oled_write_P(PSTR("CTL+Z"), false);
+        } else {
+            oled_write_P(PSTR("CTL+y"), false);
         }
     }
 }
