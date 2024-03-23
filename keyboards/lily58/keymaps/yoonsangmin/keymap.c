@@ -9,6 +9,7 @@ enum custom_keycodes {
   REDOMOD = SAFE_RANGE,
   CTL,
   GUI,
+  RNUM,
 };
 
 #define TG_GAME    TG(_GAME)
@@ -94,7 +95,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      |      |      |      |      |      |-------|    |-------|      |      |      |      |      |      |
  * |      |      |      |      |      |      |       |    |       |      |      |      |      |      |      |
  * `-----------------------------------------/      /      \      \-----------------------------------------'
- *                   |      |      |      | /      /        \      \  |  DEL |  NUM |      |
+ *                   |      |      |      | /      /        \      \  |  DEL | RNUM |      |
  *                   |      |      |      |/      /          \      \ |      |      |      |
  *                   `---------------------------'            '------''--------------------'
  */
@@ -103,7 +104,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______, _______, _______, _______, _______, _______,                   KC_CAPS, KC_PGDN, KC_UP,   KC_PGUP, KC_INS,  _______,
   _______, _______, _______, _______, _______, _______,                   KC_HOME, KC_LEFT, KC_DOWN, KC_RGHT, KC_END,  _______,
   _______, _______, _______, _______, _______, _______, _______, TG_NAV,  _______, _______, _______, _______, _______, _______,
-                             _______, _______, _______, _______, _______, KC_DEL,  TG_NUM,  _______
+                             _______, _______, _______, _______, _______, KC_DEL,  RNUM,    _______
   ),
 /* RIGHT_NUMBER
  * ,-----------------------------------------.                    ,-----------------------------------------.
@@ -216,13 +217,19 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 
 bool oled_task_user(void) {
   if (is_keyboard_master()) {
-      oled_set_cursor(0, 0);
-      render_layer();
-      oled_set_cursor(0, 12);
-      render_redo_mod();
-  } else {
-      oled_set_cursor(0, 0);
+      render_braket();
       render_stats();
+      render_division();
+      render_left_layer();
+      oled_set_cursor(0, 12);
+      render_division();
+      render_redo_mod();
+      render_braket();
+  } else {
+      render_braket();
+      render_stats();
+      render_division();
+      render_right_layer();
       oled_set_cursor(0, 12);
       render_bongo();
   }
@@ -280,6 +287,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case GUI:
             process_platform_combo(keycode, record);
+            return false;
+        case RNUM:
+            layer_off(_NAVIGATION);
+            layer_on(_RIGHT_NUMBER);
             return false;
   }
   return true;

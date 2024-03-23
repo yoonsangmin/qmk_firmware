@@ -26,61 +26,64 @@ static const char PROGMEM number[] = {
     0x00, 0x00, 0x00, 0x00, 0xC0, 0xE0, 0x30, 0xB0, 0xD8, 0x58, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x30, 0x30, 0xE0, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x0E, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x78, 0xE4, 0x02, 0x02, 0x02, 0xFC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F, 0x38, 0x38, 0x38, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x07, 0x0C, 0x0C, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x0C, 0x0C, 0x07, 0x03, 0x00, 0x00, 0x00, 0x00,
 };
 
-void render_layer(void)
+void render_braket(void)
 {
-    // Host Keyboard Layer Status
     oled_write_P(PSTR("====="), false);
-    oled_write_P(PSTR("Layer"), false);
+
+}
+
+void render_division(void)
+{
     oled_write_P(PSTR("-----"), false);
 
-    switch (get_highest_layer(layer_state)) {
-        case _QWERTY:
-            oled_write_raw_P(qwerty, 128);
-            break;
-        case _GAME:
-            oled_write_raw_P(game, 128);
-            break;
-        case _NAVIGATION:
-            oled_write_raw_P(navi, 128);
-            break;
-        case _RIGHT_NUMBER:
-            oled_write_raw_P(number, 128);
-            break;
-        case _FUNCTION:
-            oled_write_raw_P(func, 128);
-            break;
-        case _MOUSE:
-            oled_write_raw_P(mouse, 128);
-            break;
-        case _NUMBER:
-            oled_write_raw_P(number, 128);
-            break;
-        default:
-            oled_write_ln_P(PSTR("Undef\n"), false);
+}
+
+void render_left_layer(void)
+{
+    oled_write_P(PSTR("Layer"), false);
+
+    if (layer_state_is(_MOUSE)) {
+        oled_write_raw_P(mouse, 128);
+    } else if (layer_state_is(_NUMBER)) {
+        oled_write_raw_P(number, 128);
+    } else if (layer_state_is(_GAME)) {
+        oled_write_raw_P(game, 128);
+    } else {
+        oled_write_raw_P(qwerty, 128);
+    }
+}
+
+void render_right_layer(void)
+{
+    oled_write_P(PSTR("Layer"), false);
+
+    if (layer_state_is(_NAVIGATION)) {
+        oled_write_raw_P(navi, 128);
+    } else if (layer_state_is(_FUNCTION)) {
+        oled_write_raw_P(func, 128);
+    } else if (layer_state_is(_RIGHT_NUMBER)) {
+        oled_write_raw_P(number, 128);
+    } else {
+        oled_write_raw_P(qwerty, 128);
     }
 }
 
 void render_stats(void)
 {
-    oled_write_P(PSTR("====="), false);
     oled_write_P(PSTR("Stats"), false);
-    oled_write_P(PSTR("-----"), false);
     
     // Host Keyboard LED Status
     led_t led_state = host_keyboard_led_state();
-    oled_write_P(PSTR("Num:"), false);
     oled_write_P(led_state.num_lock ? PSTR("*") : PSTR("."), false);
-    oled_write_P(PSTR("Cap:"), false);
+    oled_write_P(PSTR(" "), false);
     oled_write_P(led_state.caps_lock ? PSTR("*") : PSTR("."), false);
-    oled_write_P(PSTR("Scr:"), false);
+    oled_write_P(PSTR(" "), false);
     oled_write_P(led_state.scroll_lock ? PSTR("*") : PSTR("."), false);
 }
 
 void render_redo_mod(void)
 {
-    oled_write_P(PSTR("====="), false);
     oled_write_P(PSTR("Redo "), false);
-    oled_write_P(PSTR("-----"), false);
 
     os_variant_t host_os = detected_host_os();
     if (host_os == OS_MACOS || host_os == OS_IOS) {
