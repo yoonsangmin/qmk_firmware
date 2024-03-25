@@ -28,6 +28,7 @@ enum custom_keycodes {
 #define BKSPC      RSFT_T(KC_BSPC)
 #define KANJI      RCTL_T(KC_RBRC)
 
+uint8_t  host_os;
 bool isDefaultRedoMode = true;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -223,7 +224,7 @@ bool oled_task_user(void) {
       render_left_layer();
       oled_set_cursor(0, 12);
       render_division();
-      render_redo_mod();
+      render_redo_mod(host_os, isDefaultRedoMode);
       render_braket();
   } else {
       render_braket();
@@ -237,8 +238,11 @@ bool oled_task_user(void) {
 }
 #endif // OLED_ENABLE
 
+void keyboard_post_init_user(void) {
+    host_os = detected_host_os();
+}
+
 void process_platform_combo(uint16_t keycode, keyrecord_t *record) {
-  uint8_t  host_os          = detected_host_os();
   uint16_t keycode_to_press = KC_NO;
   if (host_os == OS_MACOS || host_os == OS_IOS) {
       switch (keycode) {
@@ -276,7 +280,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return true;             // Return true for normal processing of tap keycode
         case REDOMOD:
             if (record->event.pressed) {
-                os_variant_t host_os = detected_host_os();
                 if (!(host_os == OS_MACOS || host_os == OS_IOS)) {
                     isDefaultRedoMode = !isDefaultRedoMode;
                 }
@@ -301,7 +304,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
   if (index == 0) { /* First encoder */
-        os_variant_t host_os;
         switch (get_highest_layer(layer_state)) {
             case _NAVIGATION:
                 if (clockwise) {
@@ -318,7 +320,6 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                 }
                 break;
             default:
-                host_os = detected_host_os();
                 if (clockwise) {
                     if (host_os == OS_MACOS || host_os == OS_IOS) {
                         tap_code16(LCMD(LSFT(KC_Z)));

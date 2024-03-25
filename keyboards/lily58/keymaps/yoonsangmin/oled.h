@@ -81,11 +81,10 @@ void render_stats(void)
     oled_write_P(led_state.scroll_lock ? PSTR("*") : PSTR("."), false);
 }
 
-void render_redo_mod(void)
+void render_redo_mod(os_variant_t host_os, bool isDefaultRedoMode)
 {
     oled_write_P(PSTR("Redo "), false);
 
-    os_variant_t host_os = detected_host_os();
     if (host_os == OS_MACOS || host_os == OS_IOS) {
         oled_write_P(PSTR("CMD+Z"), false);
     } else {

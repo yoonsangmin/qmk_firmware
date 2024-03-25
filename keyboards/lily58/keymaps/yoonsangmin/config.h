@@ -32,6 +32,8 @@
 
 #define USB_MAX_POWER_CONSUMPTION 100
 
+#define NO_SUSPEND_POWER_DOWN
+
 #if !defined(__ASSEMBLER__) 
 enum layer_number {
   _QWERTY = 0,
@@ -42,6 +44,4 @@ enum layer_number {
   _MOUSE,
   _NUMBER,
 };
-
-extern bool isDefaultRedoMode;
 #endif
