@@ -238,8 +238,14 @@ bool oled_task_user(void) {
 }
 #endif // OLED_ENABLE
 
+uint32_t detect_os(uint32_t trigger_time, void *cb_arg) {
+    host_os = detected_host_os();
+    return trigger_time;
+}
+
 void keyboard_post_init_user(void) {
     host_os = detected_host_os();
+    defer_exec(1500, detect_os, NULL);
 }
 
 void process_platform_combo(uint16_t keycode, keyrecord_t *record) {
