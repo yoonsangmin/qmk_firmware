@@ -289,8 +289,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             process_platform_combo(keycode, record);
             return false;
         case RSWCH:
-            layer_invert(_NAVIGATION);
-            layer_invert(_RIGHT_NUMBER);
+            if (record->event.pressed) {
+                layer_invert(_NAVIGATION);
+                layer_invert(_RIGHT_NUMBER);
+            }
             return false;
   }
   return true;
