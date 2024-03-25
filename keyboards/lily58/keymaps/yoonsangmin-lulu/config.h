@@ -12,16 +12,17 @@
 #define TAPPING_TERM 200
 
 /* Encoder support */
-#define ENCODERS_PAD_A { F5 }
-#define ENCODERS_PAD_B { F4 }
-#define ENCODERS_PAD_A_RIGHT { F4 }
-#define ENCODERS_PAD_B_RIGHT { F5 }
+#define ENCODERS_PAD_A { F4 }
+#define ENCODERS_PAD_B { F5 }
+#define ENCODERS_PAD_A_RIGHT { F5 }
+#define ENCODERS_PAD_B_RIGHT { F4 }
 #define ENCODER_RESOLUTION 2
 
 // Mouse Wheel Delay
 #define MOUSEKEY_WHEEL_DELAY 160
 
 #define SPLIT_LED_STATE_ENABLE
+#define SPLIT_LAYER_STATE_ENABLE
 #define SPLIT_TRANSPORT_MIRROR
 #define SPLIT_OLED_ENABLE
 #define SPLIT_USB_TIMEOUT 2000
@@ -30,6 +31,8 @@
 #define SPLIT_USB_DETECT
 
 #define USB_MAX_POWER_CONSUMPTION 100
+
+#define NO_SUSPEND_POWER_DOWN
 
 #if !defined(__ASSEMBLER__) 
 enum layer_number {
@@ -41,6 +44,4 @@ enum layer_number {
   _MOUSE,
   _NUMBER,
 };
-
-extern bool isDefaultRedoMode;
 #endif

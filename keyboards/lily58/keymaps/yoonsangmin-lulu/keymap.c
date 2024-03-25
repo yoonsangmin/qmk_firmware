@@ -9,11 +9,12 @@ enum custom_keycodes {
   REDOMOD = SAFE_RANGE,
   CTL,
   GUI,
+  RSWCH,
 };
 
 #define TG_GAME    TG(_GAME)
 #define TG_NAV     TG(_NAVIGATION)
-#define TG_NUM     TG(_RIGHT_NUMBER)
+#define TG_RNUM     TG(_RIGHT_NUMBER)
 
 // Layer 0 is used for custom tap-hold functions
 #define ESC        LT(0,KC_EQL)
@@ -27,6 +28,7 @@ enum custom_keycodes {
 #define BKSPC      RSFT_T(KC_BSPC)
 #define KANJI      RCTL_T(KC_RBRC)
 
+uint8_t  host_os;
 bool isDefaultRedoMode = true;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -94,7 +96,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      |      |      |      |      |      |-------|    |-------|      |      |      |      |      |      |
  * |      |      |      |      |      |      |       |    |       |      |      |      |      |      |      |
  * `-----------------------------------------/      /      \      \-----------------------------------------'
- *                   |      |      |      | /      /        \      \  |  DEL |  NUM |      |
+ *                   |      |      |      | /      /        \      \  |  DEL | RSWCH|      |
  *                   |      |      |      |/      /          \      \ |      |      |      |
  *                   `---------------------------'            '------''--------------------'
  */
@@ -103,7 +105,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______, _______, _______, _______, _______, _______,                   KC_CAPS, KC_PGDN, KC_UP,   KC_PGUP, KC_INS,  _______,
   _______, _______, _______, _______, _______, _______,                   KC_HOME, KC_LEFT, KC_DOWN, KC_RGHT, KC_END,  _______,
   _______, _______, _______, _______, _______, _______, _______, TG_NAV,  _______, _______, _______, _______, _______, _______,
-                             _______, _______, _______, _______, _______, KC_DEL,  TG_NUM,  _______
+                             _______, _______, _______, _______, _______, KC_DEL,  RSWCH,   _______
   ),
 /* RIGHT_NUMBER
  * ,-----------------------------------------.                    ,-----------------------------------------.
@@ -114,12 +116,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      |      |      |      |      |      |       |    |       |      |      |      |      |      |      |
  * |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------|    |-------|   *  |   4  |   5  |   6  |   +  |      |
- * |      |      |      |      |      |      |       |    |  NUM  |      |      |      |      |      |      |
+ * |      |      |      |      |      |      |       |    |  RNUM |      |      |      |      |      |      |
  * |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------|    |-------|      |   1  |   2  |   3  |      |      |
  * |      |      |      |      |      |      |       |    |       |      |      |      |      |      |      |
  * `-----------------------------------------/      /      \      \-----------------------------------------'
- *                   |      |      |      | /      /        \      \  |   0  |      |   .  |
+ *                   |      |      |      | /      /        \      \  |   0  | RSWCH|   .  |
  *                   |      |      |      |/      /          \      \ |      |      |      |
  *                   `---------------------------'            '------''--------------------'
  */
@@ -127,8 +129,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______, _______, _______, _______, _______, _______,                   _______, KC_NUM,  _______, _______, _______, _______,
   _______, _______, _______, _______, _______, _______,                   KC_PSLS, KC_P7,   KC_P8,   KC_P9,   KC_PMNS, _______,
   _______, _______, _______, _______, _______, _______,                   KC_PAST, KC_P4,   KC_P5,   KC_P6,   KC_PPLS, _______,
-  _______, _______, _______, _______, _______, _______, _______, TG_NUM,  _______, KC_P1,   KC_P2,   KC_P3,   _______, _______,
-                             _______, _______, _______, _______, _______, KC_P0,   _______, KC_PDOT
+  _______, _______, _______, _______, _______, _______, _______, TG_RNUM, _______, KC_P1,   KC_P2,   KC_P3,   _______, _______,
+                             _______, _______, _______, _______, _______, KC_P0,   RSWCH,   KC_PDOT
   ),
 /* FUNCTION
  * ,-----------------------------------------.                    ,-----------------------------------------.
@@ -216,13 +218,19 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 
 bool oled_task_user(void) {
   if (is_keyboard_master()) {
-      oled_set_cursor(0, 0);
-      render_layer();
-      oled_set_cursor(0, 12);
-      render_redo_mod();
-  } else {
-      oled_set_cursor(0, 0);
+      render_braket();
       render_stats();
+      render_division();
+      render_left_layer();
+      oled_set_cursor(0, 12);
+      render_division();
+      render_redo_mod(host_os, isDefaultRedoMode);
+      render_braket();
+  } else {
+      render_braket();
+      render_stats();
+      render_division();
+      render_right_layer();
       oled_set_cursor(0, 12);
       render_bongo();
   }
@@ -230,8 +238,11 @@ bool oled_task_user(void) {
 }
 #endif // OLED_ENABLE
 
+void keyboard_post_init_user(void) {
+    host_os = detected_host_os();
+}
+
 void process_platform_combo(uint16_t keycode, keyrecord_t *record) {
-  uint8_t  host_os          = detected_host_os();
   uint16_t keycode_to_press = KC_NO;
   if (host_os == OS_MACOS || host_os == OS_IOS) {
       switch (keycode) {
@@ -269,7 +280,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return true;             // Return true for normal processing of tap keycode
         case REDOMOD:
             if (record->event.pressed) {
-                os_variant_t host_os = detected_host_os();
                 if (!(host_os == OS_MACOS || host_os == OS_IOS)) {
                     isDefaultRedoMode = !isDefaultRedoMode;
                 }
@@ -281,6 +291,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case GUI:
             process_platform_combo(keycode, record);
             return false;
+        case RSWCH:
+            if (record->event.pressed) {
+                layer_invert(_NAVIGATION);
+                layer_invert(_RIGHT_NUMBER);
+            }
+            return false;
   }
   return true;
 }
@@ -288,31 +304,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
   if (index == 0) { /* First encoder */
-        os_variant_t host_os;
         switch (get_highest_layer(layer_state)) {
             case _NAVIGATION:
                 if (clockwise) {
-                    tap_code16(KC_BTN4);
-                } else {
                     tap_code16(KC_BTN5);
+                } else {
+                    tap_code16(KC_BTN4);
                 }
                 break;
             case _FUNCTION:
                 if (clockwise) {
-                    tap_code16(KC_MPRV);
-                } else {
                     tap_code16(KC_MNXT);
+                } else {
+                    tap_code16(KC_MPRV);
                 }
                 break;
             default:
-                host_os = detected_host_os();
                 if (clockwise) {
-                    if (host_os == OS_MACOS || host_os == OS_IOS) {
-                        tap_code16(LCMD(KC_Z));
-                    } else {
-                        tap_code16(LCTL(KC_Z));
-                    }
-                } else {
                     if (host_os == OS_MACOS || host_os == OS_IOS) {
                         tap_code16(LCMD(LSFT(KC_Z)));
                     } else {
@@ -322,6 +330,12 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                             tap_code16(LCTL(KC_Y));
                         }
                     }
+                } else {
+                    if (host_os == OS_MACOS || host_os == OS_IOS) {
+                        tap_code16(LCMD(KC_Z));
+                    } else {
+                        tap_code16(LCTL(KC_Z));
+                    }
                 }
                 break;
         }
@@ -329,23 +343,23 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
         switch (get_highest_layer(layer_state)) {
             case _MOUSE:
                 if (clockwise) {
-                    tap_code(KC_PGDN);
-                } else {
                     tap_code(KC_PGUP);
+                } else {
+                    tap_code(KC_PGDN);
                 }
                 break;
             case _NUMBER:
                 if (clockwise) {
-                    tap_code(KC_TAB);
-                } else {
                     tap_code16(LSFT(KC_TAB));
+                } else {
+                    tap_code(KC_TAB);
                 }
                 break;
             default:
                 if (clockwise) {
-                    tap_code(KC_VOLU);
-                } else {
                     tap_code(KC_VOLD);
+                } else {
+                    tap_code(KC_VOLU);
                 }
                 break;
         }
