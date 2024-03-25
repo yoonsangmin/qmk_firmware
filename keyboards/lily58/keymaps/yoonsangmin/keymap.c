@@ -7,14 +7,16 @@
 
 enum custom_keycodes {
   REDOMOD = SAFE_RANGE,
-  CTL,
-  GUI,
+  LCTL,
+  LGUI,
+  RALT,
+  CAPS,
   RSWCH,
 };
 
 #define TG_GAME    TG(_GAME)
 #define TG_NAV     TG(_NAVIGATION)
-#define TG_RNUM     TG(_RIGHT_NUMBER)
+#define TG_RNUM    TG(_RIGHT_NUMBER)
 
 // Layer 0 is used for custom tap-hold functions
 #define ESC        LT(0,KC_EQL)
@@ -44,7 +46,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * | LCMD |      |      |      |      |      |REDOMOD|    |  Mute |      |      |      |      |      |      |
  * |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
  * | LGUI |   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  | RAlt |
- * | LCTRL|      |      |      |      |      |       |    |       |      |      |      |      |      |      |
+ * | LCTRL|      |      |      |      |      |       |    |       |      |      |      |      |      | CAPS |
  * `-----------------------------------------/      /      \      \-----------------------------------------'
  *                   | LAlt |   `  | Enter| / Space/        \BackSP\  |  DEL |   [  |   ]  |
  *                   |      |Number| Mouse|/ LSFT /          \ RSFT \ | NAVI | FUNC | RCTRL|
@@ -53,8 +55,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  [_QWERTY] = LAYOUT(
   ESC,      KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                      KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,
   KC_TAB,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                      KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
-  CTL,      KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                      KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-  GUI,      KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,    REDOMOD, KC_MUTE, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RALT,
+  LCTL,     KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                      KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
+  LGUI,     KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,    REDOMOD, KC_MUTE, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, RALT,
                              KC_LALT, NUMBER,  MOUSE,   SPACE,   BKSPC,   NAV,     FUNC,    KANJI
   ),
 /* GAME
@@ -88,7 +90,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------.    ,-------| CAPS | PGDN |  Up  | PGUP |  INS |      |
- * |      |      |      |      |      |      |  BTN5 |    |       |      |      |      |      |      |      |
+ * |      |      |      |      |      |      |  BTN5 |    |       | RAlt |      |      |      |      |      |
  * |------+------+------+------+------+------|  BTN4 |    |       |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------|    |-------| Home | Left | Down | Right|  End |      |
  * |      |      |      |      |      |      |       |    |  NAV  |      |      |      |      |      |      |
@@ -102,7 +104,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
   [_NAVIGATION] = LAYOUT(
   _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______,
-  _______, _______, _______, _______, _______, _______,                   KC_CAPS, KC_PGDN, KC_UP,   KC_PGUP, KC_INS,  _______,
+  _______, _______, _______, _______, _______, _______,                   CAPS,    KC_PGDN, KC_UP,   KC_PGUP, KC_INS,  _______,
   _______, _______, _______, _______, _______, _______,                   KC_HOME, KC_LEFT, KC_DOWN, KC_RGHT, KC_END,  _______,
   _______, _______, _______, _______, _______, _______, _______, TG_NAV,  _______, _______, _______, _______, _______, _______,
                              _______, _______, _______, _______, _______, KC_DEL,  RSWCH,   _______
@@ -252,20 +254,32 @@ void process_platform_combo(uint16_t keycode, keyrecord_t *record) {
   uint16_t keycode_to_press = KC_NO;
   if (host_os == OS_MACOS || host_os == OS_IOS) {
       switch (keycode) {
-          case CTL:
-              keycode_to_press = KC_LGUI;
+          case LCTL:
+              keycode_to_press = KC_LCMD;
               break;
-          case GUI:
+          case LGUI:
               keycode_to_press = KC_LCTL;
+              break;
+          case RALT:
+              keycode_to_press = KC_CAPS;
+              break;
+          case CAPS:
+              keycode_to_press = KC_RALT;
               break;
       }
   } else {
       switch (keycode) {
-          case CTL:
+          case LCTL:
               keycode_to_press = KC_LCTL;
               break;
-          case GUI:
+          case LGUI:
               keycode_to_press = KC_LGUI;
+              break;
+          case RALT:
+              keycode_to_press = KC_RALT;
+              break;
+          case CAPS:
+              keycode_to_press = KC_CAPS;
               break;
       }
   }
@@ -283,7 +297,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code(KC_ESC); // Intercept hold function to send ESC
                 return false;
             }
-            return true;             // Return true for normal processing of tap keycode
+            return true;          // Return true for normal processing of tap keycode
         case REDOMOD:
             if (record->event.pressed) {
                 if (!(host_os == OS_MACOS || host_os == OS_IOS)) {
@@ -291,10 +305,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-        case CTL:
-            process_platform_combo(keycode, record);
-            return false;
-        case GUI:
+        case LCTL:
+        case LGUI:
+        case RALT:
+        case CAPS:
             process_platform_combo(keycode, record);
             return false;
         case RSWCH:
