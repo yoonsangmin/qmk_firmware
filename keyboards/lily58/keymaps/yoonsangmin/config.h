@@ -8,7 +8,6 @@
 #define EE_HANDS
 
 #define PERMISSIVE_HOLD
-#define IGNORE_MOD_TAP_INTERRUPT
 #define TAPPING_TERM 200
 
 /* Encoder support */
@@ -33,6 +32,10 @@
 #define USB_MAX_POWER_CONSUMPTION 100
 
 #define NO_SUSPEND_POWER_DOWN
+
+// OS Detection
+#define OS_DETECTION_DEBOUNCE 200
+#define OS_DETECTION_KEYBOARD_RESET
 
 #if !defined(__ASSEMBLER__) 
 enum layer_number {
