@@ -1,6 +1,4 @@
 #pragma once
-#include <stdbool.h>
-
 /* Select hand configuration */
 
 // #define MASTER_LEFT
@@ -28,6 +26,8 @@
 #define SPLIT_WATCHDOG_ENABLE
 #define SPLIT_WATCHDOG_TIMEOUT 3000
 #define SPLIT_USB_DETECT
+
+#define SPLIT_TRANSACTION_IDS_USER USER_SYNC_REDO_STATE
 
 #define USB_MAX_POWER_CONSUMPTION 100
 

@@ -1,5 +1,8 @@
 #include QMK_KEYBOARD_H
+
 #include "os_detection.h"
+#include "transactions.h"
+
 #ifdef OLED_ENABLE
 #include "oled.h"
 #include "bongo.h"
@@ -219,7 +222,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 bool oled_task_user(void) {
-  if (is_keyboard_master()) {
+  if (is_keyboard_left()) {
       render_braket();
       render_stats();
       render_division();
@@ -240,6 +243,16 @@ bool oled_task_user(void) {
 }
 #endif // OLED_ENABLE
 
+// Sync Redo State
+void user_sync_redo_state_handler(uint8_t in_buflen, const void* in_data, uint8_t out_buflen, void* out_data) {
+    isDefaultRedoMode = *(bool *)in_data;
+}
+
+void keyboard_post_init_user(void) {
+    transaction_register_rpc(USER_SYNC_REDO_STATE, user_sync_redo_state_handler);
+}
+
+// OS Detection
 bool process_detected_host_os_kb(os_variant_t detected_os) {
     host_os = detected_os;
     return false;
@@ -297,6 +310,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 if (!(host_os == OS_MACOS || host_os == OS_IOS)) {
                     isDefaultRedoMode = !isDefaultRedoMode;
+                    if (is_keyboard_master() && !is_keyboard_left()) {
+                        transaction_rpc_send(USER_SYNC_REDO_STATE, 1, &isDefaultRedoMode);
+                    }
                 }
             }
             return false;
