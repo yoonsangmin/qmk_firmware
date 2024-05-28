@@ -374,23 +374,23 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
         switch (get_highest_layer(layer_state)) {
             case _MOUSE:
                 if (clockwise) {
-                    tap_code(KC_PGUP);
-                } else {
                     tap_code(KC_PGDN);
+                } else {
+                    tap_code(KC_PGUP);
                 }
                 break;
             case _NUMBER:
                 if (clockwise) {
-                    tap_code16(LSFT(KC_TAB));
-                } else {
                     tap_code(KC_TAB);
+                } else {
+                    tap_code16(LSFT(KC_TAB));
                 }
                 break;
             default:
                 if (clockwise) {
-                    tap_code(KC_VOLD);
-                } else {
                     tap_code(KC_VOLU);
+                } else {
+                    tap_code(KC_VOLD);
                 }
                 break;
         }

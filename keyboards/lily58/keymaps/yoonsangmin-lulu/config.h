@@ -11,8 +11,8 @@
 /* Encoder support */
 #define ENCODERS_PAD_A { F4 }
 #define ENCODERS_PAD_B { F5 }
-#define ENCODERS_PAD_A_RIGHT { F5 }
-#define ENCODERS_PAD_B_RIGHT { F4 }
+#define ENCODERS_PAD_A_RIGHT { F4 }
+#define ENCODERS_PAD_B_RIGHT { F5 }
 #define ENCODER_RESOLUTION 2
 
 // Mouse Wheel Delay
